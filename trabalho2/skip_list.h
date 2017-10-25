@@ -1,4 +1,6 @@
 // arquivo com as definicoes e escopo das funcoes para utilizar a skip list
+#ifndef	SKIP_LIST_H
+#define SKIP_LIST_H
 
 #define MAX 5;
 
@@ -10,7 +12,7 @@ typedef struct{
 typedef struct t_item t_item;
 
 struct t_item{
-		
+
 	t_data *data;
 	t_item **p;
 };
@@ -24,3 +26,5 @@ typedef struct {
 
 
 void cria(t_lista *t);
+
+#endif
