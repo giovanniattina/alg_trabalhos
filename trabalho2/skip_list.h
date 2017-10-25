@@ -1,0 +1,1 @@
+// arquivo com as definicoes e escopo das funcoes para utilizar a skip list
