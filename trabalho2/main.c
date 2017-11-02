@@ -6,10 +6,36 @@
 */
 #include "skip_list.h"
 
+char *add_item(char *antigo, char *novo){
+
+	size_t tam_antigo, tam_novo;
+
+	if(antigo != NULL) tam_antigo = strlen(antigo);
+	else tam_antigo = 0;
+	tam_novo = strlen(novo);
+	char *retorno  = (char*)malloc(sizeof(char)* tam_antigo*tam_novo + 2);
+
+	if(tam_antigo > 0){// se ja tiver alguma coisa no antigo
+		//subescreve antigo no retorno
+		for(size_t i = 0; i < tam_antigo; i++) retorno[i] = antigo[i];
+
+		retorno[tam_antigo] = ' ';
+		//passa o novo para o antigo
+		for (size_t i = tam_antigo+1, j = 0; i <= tam_antigo+tam_novo; i++, j++) {
+			retorno[i] = novo[j];
+		}
+	}else{//se nao tiver nada em antigo
+
+		for(size_t i = 0; i < tam_novo; i++) retorno[i] = novo[i];
+	}
+
+
+	return retorno;
+}
 
 t_data *recebe_analiza(char *linha){
 	int r, pos, bytes, item;
-	char palavra[100];
+	char *palavra = (char*)malloc(sizeof(101));
 	t_data *retorno = (t_data*)malloc(sizeof(t_data));
 	/*
 	 *	item 0 -> operacao a ser feito na lista
@@ -19,12 +45,14 @@ t_data *recebe_analiza(char *linha){
 	pos = 0; item = 0;
 	while((r = sscanf(&linha[pos], "%s %n", palavra, &bytes)) != EOF){
 		if (r == 1) {
-			printf("%s\n", palavra);
 			switch (item) {
 				case 0:
+					retorno->chave =  add_item(retorno->chave, palavra);
 					item++;
+					break;
 				case 1:
-					add_item(retorno->chave, palavra);
+					retorno->conteudo =  add_item(retorno->conteudo, palavra);
+					break;
 			}
 
 		}
@@ -32,20 +60,64 @@ t_data *recebe_analiza(char *linha){
 
 	}
 
+
 	return retorno;
+}
+
+char *acao_lista(char *analiza, int *final){
+	int controle = *final;
+	char *acao = (char*)malloc(sizeof(char) * 20);
+
+	while(analiza[controle] != 32){
+		acao[controle] = analiza[controle];
+		controle++;
+	}
+	*final = controle;
+	return acao;
+}
+
+void lista(t_lista *t, char *operacao, t_data *dado){
+
+
+
+	if(strcmp(operacao, "insercao") == 0){
+		insere(t, dado);
+
+	}else if(strcmp(operacao, "remocao") == 0){
+
+	}else if(strcmp(operacao, "busca") == 0){
+
+	}else if(strcmp(operacao, "alteracao") == 0){
+
+	}else if(strcmp(operacao, "impressao") == 0){
+
+	}
+
+
+
 }
 
 int main(){
 
-	char linha[1001];
+	char linha[1001], *acao;
+	int para;
 	t_data *res;
-
-
+	t_lista *l;
+	l = cria();
 	do {
+			para = 0;
+
 		 fgets(linha, 1001, stdin);
 		 //trata \n
 		 if(linha[strlen(linha)-1] == '\n') linha[strlen(linha)-1] = '\0';
-		 res = recebe_analiza(linha);
+		 acao = acao_lista(linha, &para);
+		 printf("acao %s\n", acao);
+		 res = recebe_analiza(&(linha[para]));
+		 printf("chave %s\n", res->chave);
+		 printf("conteudo %s\n", res->conteudo);
+		 printf("\n \n");
+
+		 lista(l ,acao, res);
 	}while(!feof(stdin));
 
 

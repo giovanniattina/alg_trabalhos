@@ -9,11 +9,15 @@ t_lista *cria(){
 	t->lista->p = (t_item**)malloc(sizeof(t_item*)*MAX);
 
 	//defina todos os proximo item com null
-	for(int i = 0; i < MAX; i++)strcpy(t->lista->p[i]->data->chave, "zzz");
+	for(int i = 0; i < MAX; i++){
+		t->lista->p[i] = (t_item*)malloc(sizeof(t_item));
+		t->lista->p[i]->data = (t_data*)malloc(sizeof(t_data));
+		t->lista->p[i]->data->chave = (char*)malloc(sizeof(char)*4);
+		strcpy(t->lista->p[i]->data->chave, "zzz");
+	}
 
-	t->nivel = 1;
+	t->nivel = 0;
 	t->qnt_item = 0;
-
 	return t;
 }
 
@@ -28,22 +32,27 @@ int insere(t_lista *t, t_data *novo){
 	t_item *atualizar[MAX];//salvar ponteiro para item anterior em todos niveis da lista
 	t_item *aux = t->lista;//aponta para o primeiro item
 
-	for(int i = t->nivel; i > 0; i--){//anda por todos os niveis
+	for(int i = t->nivel; i >= 0; i--){//anda por todos os niveis
+			printf(" i: %d \n", i);
 			while (strcmp(aux->p[i]->data->chave, novo->chave) <= 0) {//ate acha um item maior ou igual que quero inserir
 					aux = aux->p[i];
 			}
+			printf("aux tem %x\n", aux->data);
 			atualizar[i] = aux;
-	}
+			printf("em atualizar tem %x\n", atualizar[i]->data)	;
 
+	}
 	aux = aux->p[0]; // item com nivel mais baixo que quero inserir
 
 	if(strcmp(aux->data->chave, novo->chave) == 1){// se tiver item com a mesma chave que quero inserir da erro
+
+
 		return 0; //erro
 	}else{//se não tiver
-
 		int nivel = level_aleatorio();
 
 		if(nivel > t->nivel){
+
 			for(int i = t->nivel; i <= nivel; i++){
 				atualizar[i] = t->lista;
 			}
@@ -55,10 +64,17 @@ int insere(t_lista *t, t_data *novo){
 		aux->data = novo;
 		aux->p = (t_item**)malloc(sizeof(t_item*)*MAX);
 
+
+
 		for(int i = 0; i < nivel; i++){//anda por todos os niveis e vai adicionando o novo 	item
+			printf("ero\n");
+			printf("oi %s \n", aux->data->chave);
+			printf("atualizar %s\n", atualizar[i]->data->chave);
 			aux->p[i] = atualizar[i]->p[i];
 			atualizar[i]->p[i] = aux;
 		}
+
+
 	}
 	return 1;//se nao acho um item iguaç e nao teve erro
 
