@@ -7,7 +7,7 @@
 #include <string.h>
 #include <regex.h>
 
-#define MAX 100
+#define MAX 20
 
 typedef struct{
 	char *chave;
