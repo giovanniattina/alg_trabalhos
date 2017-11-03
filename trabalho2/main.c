@@ -13,11 +13,13 @@ char *add_item(char *antigo, char *novo){
 	if(antigo != NULL) tam_antigo = strlen(antigo);
 	else tam_antigo = 0;
 	tam_novo = strlen(novo);
-	char *retorno  = (char*)malloc(sizeof(char)* tam_antigo*tam_novo + 2);
-
+	char *retorno  = (char*)malloc(sizeof(char)* 1000);
 	if(tam_antigo > 0){// se ja tiver alguma coisa no antigo
+
 		//subescreve antigo no retorno
-		for(size_t i = 0; i < tam_antigo; i++) retorno[i] = antigo[i];
+		for(size_t i = 0; i < tam_antigo; i++) {
+			retorno[i] = antigo[i];
+		}
 
 		retorno[tam_antigo] = ' ';
 		//passa o novo para o antigo
@@ -35,7 +37,7 @@ char *add_item(char *antigo, char *novo){
 
 t_data *recebe_analiza(char *linha){
 	int r, pos, bytes, item;
-	char *palavra = (char*)malloc(sizeof(101));
+	char *palavra = (char*)malloc(sizeof(150));
 	t_data *retorno = (t_data*)malloc(sizeof(t_data));
 	/*
 	 *	item 0 -> operacao a ser feito na lista
@@ -78,24 +80,50 @@ char *acao_lista(char *analiza, int *final){
 
 void lista(t_lista *t, char *operacao, t_data *dado){
 
-
+	int aux;
 
 	if(strcmp(operacao, "insercao") == 0){
-		insere(t, dado);
+		//printf("INSERE\n");
+		aux = insere(t, dado);
+		if(aux != 0){
+			printf("OPERACAO INVALIDA\n");
+		}
 
 	}else if(strcmp(operacao, "remocao") == 0){
+		//printf("DELETA\n");
+		aux = deleta(t, dado);
+		if(aux != 0){
+			printf("OPERACAO INVALIDA\n");
+		}
 
 	}else if(strcmp(operacao, "busca") == 0){
-
+		//printf("BUSCA\n");
+		aux = busca(t, dado->chave);
+		if(aux != 0){
+			printf("OPERACAO INVALIDA\n");
+		}
 	}else if(strcmp(operacao, "alteracao") == 0){
+		//printf("ALTERA\n");
+		aux = altera_conteudo(t, dado);
+		if(aux != 0){
+			printf("OPERACAO INVALIDA\n");
 
+		}
 	}else if(strcmp(operacao, "impressao") == 0){
+		aux = busca_letra(t, dado->chave);
+		if(aux != 0){
+			printf("OPERACAO INVALIDA\n");
 
+		}
 	}
-
-
-
 }
+
+
+#define recebe_linha(linha) {\
+ fgets(linha, 1001, stdin);\
+ if(linha[strlen(linha) -1] == '\n') linha[strlen(linha) -1] = '\0';\
+ }
+
 
 int main(){
 
@@ -107,17 +135,22 @@ int main(){
 	do {
 			para = 0;
 
-		 fgets(linha, 1001, stdin);
-		 //trata \n
-		 if(linha[strlen(linha)-1] == '\n') linha[strlen(linha)-1] = '\0';
+		 recebe_linha(linha);
+		 printf("%s\n", linha);
+
 		 acao = acao_lista(linha, &para);
-		 printf("acao %s\n", acao);
+		 //printf("acao %s\n", acao);
 		 res = recebe_analiza(&(linha[para]));
-		 printf("chave %s\n", res->chave);
-		 printf("conteudo %s\n", res->conteudo);
-		 printf("\n \n");
+		 //printf("chave %s\n", res->chave);
+		 //printf("conteudo %s\n", res->conteudo);
 
 		 lista(l ,acao, res);
+		 /*printf("------------------\n");
+		 printf("MINHA LISTA\n");
+		 print_lista(l);
+		 printf("-----------------\n");
+		 printf("\n \n");*/
+
 	}while(!feof(stdin));
 
 

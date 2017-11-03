@@ -7,7 +7,7 @@
 #include <string.h>
 #include <regex.h>
 
-#define MAX 5
+#define MAX 100
 
 typedef struct{
 	char *chave;
@@ -83,6 +83,9 @@ int busca(t_lista *t, char *busca);
  * @param  letra [description]
  * @return       [description]
  */
-t_data **busca_letra(t_lista *t, char *letra);
+int busca_letra(t_lista *t, char *letra);
 
+int altera_conteudo(t_lista *t, t_data *data);
+
+void print_lista(t_lista *t);
 #endif
