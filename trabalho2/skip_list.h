@@ -75,7 +75,7 @@ int deleta(t_lista *t, t_data *data);
  * @param  busca [chave a ser buscado]
  * @return       [ 0 se tiver um item com a chave na lista e 1 se nao tiver]
  */
-int busca(t_lista *t, char *busca);
+int busca(t_lista *t, t_data *busca);
 
 /**
  * [busca_letra description]

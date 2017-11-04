@@ -6,15 +6,8 @@ t_lista *cria(){
 	t = (t_lista*)malloc(sizeof(t_lista));
 
 	t->lista = (t_item*)malloc(sizeof(t_item));
-	t->lista->p = (t_item**)malloc(sizeof(t_item*)*MAX+1);
+	t->lista->p = (t_item**)calloc(MAX+1 , sizeof(t_item*));
 
-	//defina todos os proximo item com null
-	for(int i = 1; i <= MAX; i++){
-		t->lista->p[i] = (t_item*)malloc(sizeof(t_item)*1);
-		t->lista->p[i]->data = (t_data*)malloc(sizeof(t_data)*1);
-		t->lista->p[i]->data->chave = (char*)malloc(sizeof(char)*4);
-		strcpy(t->lista->p[i]->data->chave, "zzz");
-	}
 
 	t->nivel = 1;
 	t->qnt_item = 0;
@@ -31,14 +24,16 @@ int insere(t_lista *t, t_data *novo){
 	t_item **atualizar = (t_item**)malloc(sizeof(t_item)*MAX+1);//salvar ponteiro para item anterior em todos niveis da lista
 	t_item *aux = t->lista;//aponta para o primeiro item
 	for(int i = t->nivel; i >= 1; i--){//anda por todos os niveis
-			while (aux->p[i] && strcmp(aux->p[i]->data->chave, novo->chave) < 0) {//ate acha um item maior ou igual que quero inserir
+			while ( aux->p[i] != NULL  && strcmp(aux->p[i]->data->chave, novo->chave) < 0) {//ate acha um item maior ou igual que quero inserir
+				printf("%s\n",aux->p[i]->data->chave );
 					aux = aux->p[i];
 			}
 			atualizar[i] = aux;
 
 	}
 	aux = aux->p[1]; // item com nivel mais baixo que quero inserir
-	if(strcmp(aux->data->chave, novo->chave) == 0){// se tiver item com a mesma chave que quero inserir da erro
+
+	if(aux != NULL && strcmp(aux->data->chave, novo->chave) == 0){// se tiver item com a mesma chave que quero inserir da erro
 
 		return 1; //erro
 	}else{//se não tiver
@@ -54,13 +49,12 @@ int insere(t_lista *t, t_data *novo){
 		//aloca espaco para o novo item
 		aux = (t_item*)malloc(sizeof(t_item));
 		aux->data = novo;
-		aux->p = (t_item**)malloc(sizeof(t_item*)*MAX);
-
+		aux->p = (t_item**)calloc(MAX+1, sizeof(t_item*));
+		printf("%d\n", nivel);
 		for(int i = 1; i <= nivel; i++){//anda por todos os niveis e vai adicionando o novo 	item
 			aux->p[i] = atualizar[i]->p[i];
 			atualizar[i]->p[i] = aux;
 		}
-
 
 	}
 	return 0;//se nao acho um item iguaç e nao teve erro
@@ -80,8 +74,7 @@ int deleta(t_lista *t, t_data *data){
 	t_item *aux = t->lista;//aponta para o primeiro item
 
 	for(int i = t->nivel; i >= 1; i--){//anda por todos os niveis
-			while (aux->p[i] != NULL && strcmp(aux->p[i]->data->chave, data->chave) < 0) {//ate acha um item maior ou igual que quero deletar
-
+			while (aux->p[i] != 0 && strcmp(aux->p[i]->data->chave, data->chave) < 0) {//ate acha um item maior ou igual que quero deletar
 					aux = aux->p[i];
 			}
 			atualizar[i] = aux;
@@ -93,7 +86,7 @@ int deleta(t_lista *t, t_data *data){
 		for(int i = 1; i <= t->nivel; i++){ //anda por todos o niveis
 			if(atualizar[i]->p[i] != aux) break;
 
-			atualizar[i]->p[1] = aux->p[i];//faz todos os ponteiros aportar para o item proximo do que sera excluido
+			atualizar[i]->p[i] = aux->p[i];//faz todos os ponteiros aportar para o item proximo do que sera excluido
 		}
 		free_item(aux);//libera memoria alocada apra o item
 		while (t->nivel > 1 && strcmp(t->lista->p[t->nivel]->data->chave, "zzz") == 0)  t->nivel--; //anda por todos os niveis e vai vendo se algum nivel ficou vazio, se sim diminiu o tamanho total de lsita
@@ -104,17 +97,17 @@ int deleta(t_lista *t, t_data *data){
 	return 1;
 }
 
-int busca(t_lista *t, char *data){
-
+int busca(t_lista *t, t_data *data){
 	t_item *aux = t->lista;
-	for (int i = t->nivel; i >= 1; i--){
-		printf("%s\n", aux->p[i]->data->chave);
-		while (aux->p[i] && strcmp(aux->p[i]->data->chave, data) <= 0){
-
+	for(int i = t->nivel; i > 0; i--){//anda por todos os niveis
+		while (aux->p[i] && strncmp(aux->p[i]->data->chave, data->chave, strlen(data->chave)+1) <= 0) {//ate acha um item maior ou igual que quero inserir
 			aux = aux->p[i];
 		}
 	}
-	if(strcmp(aux->data->chave, data) == 0){
+
+	//aux = aux->p[1];
+
+	if(aux && strcmp(aux->data->chave, data->chave) == 0){
 		printf("%s %s\n", aux->data->chave, aux->data->conteudo);
 		return 0;
 	}
@@ -144,7 +137,7 @@ int  busca_letra(t_lista *t, char *letra){
 	t_item *aux = t->lista;//aponta para o primeiro item
 	for(int i = t->nivel; i > 0; i--){//anda por todos os niveis
 
-			while (strncmp(aux->p[i]->data->chave, letra, 1) < 0) {//ate acha um item maior ou igual que quero inserir
+			while (aux->p[i] && strncmp(aux->p[i]->data->chave, letra, 1) < 0) {//ate acha um item maior ou igual que quero inserir
 					aux = aux->p[i];
 			}
 	}
@@ -171,7 +164,7 @@ void print_lista(t_lista *t){
 		printf("%d NIVEL\n", i);
 		printf("-------------------\n");
 		aux = t->lista->p[i];
-		while(strcmp(aux->data->chave, "zzz") != 0 ){
+		while(aux->p[i] && strcmp(aux->data->chave, "zzz") != 0 ){
 			printf("chave %s conteudo %s\n", aux->data->chave, aux->data->conteudo);
 			aux = aux->p[i];
 		}
