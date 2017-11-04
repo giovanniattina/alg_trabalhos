@@ -18,3 +18,7 @@ val:
 gdb:
 	gcc *.c -Wall -g
 	gdb ./a.out
+
+zip:
+	rm *.zip
+	zip *.c *.h Makefile

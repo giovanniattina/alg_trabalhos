@@ -25,7 +25,6 @@ int insere(t_lista *t, t_data *novo){
 	t_item *aux = t->lista;//aponta para o primeiro item
 	for(int i = t->nivel; i >= 1; i--){//anda por todos os niveis
 			while ( aux->p[i] != NULL  && strcmp(aux->p[i]->data->chave, novo->chave) < 0) {//ate acha um item maior ou igual que quero inserir
-				printf("%s\n",aux->p[i]->data->chave );
 					aux = aux->p[i];
 			}
 			atualizar[i] = aux;
@@ -50,7 +49,6 @@ int insere(t_lista *t, t_data *novo){
 		aux = (t_item*)malloc(sizeof(t_item));
 		aux->data = novo;
 		aux->p = (t_item**)calloc(MAX+1, sizeof(t_item*));
-		printf("%d\n", nivel);
 		for(int i = 1; i <= nivel; i++){//anda por todos os niveis e vai adicionando o novo 	item
 			aux->p[i] = atualizar[i]->p[i];
 			atualizar[i]->p[i] = aux;
@@ -100,18 +98,19 @@ int deleta(t_lista *t, t_data *data){
 int busca(t_lista *t, t_data *data){
 	t_item *aux = t->lista;
 	for(int i = t->nivel; i > 0; i--){//anda por todos os niveis
-		while (aux->p[i] && strncmp(aux->p[i]->data->chave, data->chave, strlen(data->chave)+1) <= 0) {//ate acha um item maior ou igual que quero inserir
+		while (aux->p[i] && strncmp(aux->p[i]->data->chave, data->chave, strlen(data->chave)+1) < 0) {//ate acha um item maior ou igual que quero inserir
+			//printf("%s\n", aux->p[i]->data->chave);
+
 			aux = aux->p[i];
 		}
 	}
 
-	//aux = aux->p[1];
+	aux = aux->p[1];
 
-	if(aux && strcmp(aux->data->chave, data->chave) == 0){
+	if(aux != 0 && strcmp(aux->data->chave, data->chave) == 0){
 		printf("%s %s\n", aux->data->chave, aux->data->conteudo);
 		return 0;
 	}
-
 	return 1;
 }
 
@@ -155,6 +154,20 @@ int  busca_letra(t_lista *t, char *letra){
 	return 1;
 }
 
+void free_lista(t_lista *t){
+    t_item *nodo_atual = t->lista->p[1];
+    while(nodo_atual != t->lista) {
+        t_item *proximo_nodo = nodo_atual->p[1];
+        free(nodo_atual->p);
+        free(nodo_atual);
+        nodo_atual = proximo_nodo;
+    }
+    free(nodo_atual->p);
+    free(nodo_atual);
+    free(t);
+}
+
+
 void print_lista(t_lista *t){
 	t_item *aux = t->lista;
 
@@ -168,7 +181,7 @@ void print_lista(t_lista *t){
 			printf("chave %s conteudo %s\n", aux->data->chave, aux->data->conteudo);
 			aux = aux->p[i];
 		}
-		printf(" chave %s conteudo %s\n", aux->data->chave, aux->data->conteudo);
+		printf("chave %s conteudo %s\n", aux->data->chave, aux->data->conteudo);
 	}
 
 

@@ -5,8 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <regex.h>
-
+#include <time.h>
 #define MAX 20
 
 typedef struct{
@@ -85,7 +84,19 @@ int busca(t_lista *t, t_data *busca);
  */
 int busca_letra(t_lista *t, char *letra);
 
+/**
+ * [altera_conteudo description]
+ * @param  t    [description]
+ * @param  data [description]
+ * @return      [description]
+ */
 int altera_conteudo(t_lista *t, t_data *data);
+
+/**
+ * [free_lista description]
+ * @param t [description]
+ */
+void free_lista(t_lista *t);
 
 void print_lista(t_lista *t);
 #endif
