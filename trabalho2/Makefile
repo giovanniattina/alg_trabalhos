@@ -13,7 +13,7 @@ tudo:
 
 val:
 		gcc *.c -Wall -g
-		valgrind --leak-check=full --track-origins=yes ./a.out
+		valgrind --leak-check=full --track-origins=yes  --show-leak-kinds=all -v ./a.out
 
 gdb:
 	gcc *.c -Wall -g

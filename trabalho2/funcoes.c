@@ -1,41 +1,36 @@
 #include "skip_list.h"
 
-
-
-
 char *add_item(char *antigo, char *novo, int sobescreve){
 
-	int tam_antigo, tam_novo;
-
+	size_t tam_antigo, tam_novo, i, j;
 	tam_novo = strlen(novo);
 
-	char *retorno  = (char*)malloc(sizeof(char)* 1000);
-	if(antigo != 0 && sobescreve == 1){
+	char *retorno = NULL;
+	retorno  = (char*)malloc(sizeof(char)* (200));
+	if(antigo != NULL && sobescreve == 1){
+
+		tam_antigo = strlen(antigo);
+
 		//subescreve antigo no retorno
-		tam_antigo = 0;
-
-		while(antigo[tam_antigo] != '\0'){
-			retorno[tam_antigo] = antigo[tam_antigo];
-			tam_antigo++;
-		}
-
+		strcpy(retorno, antigo);
+		free(antigo);
 		retorno[tam_antigo] = ' ';
 		//passa o novo para o antigo
-		for (int i = tam_antigo+1, j = 0; i <= tam_antigo+tam_novo; i++, j++)
-			retorno[i] = novo[j];
+		for (i = tam_antigo+1, j = 0; i <= tam_antigo+tam_novo; i++, j++)
+			strcpy(&(retorno[i]), &(novo[j]));
+
 	}else{
-		for(int i = 0; i < tam_novo; i++) retorno[i] = novo[i];
+
+		for(i = 0; i < tam_novo; i++) strcpy( &(retorno[i]) , &(novo[i]));
 	}
-
-
-
+	retorno[i] = '\0';
 
 	return retorno;
 }
 
 t_data *recebe_analiza(char *linha){
 	int r, pos, bytes, item, sobre;
-	char *palavra = (char*)malloc(sizeof(300));
+	char *palavra = (char*)malloc(sizeof(char)*300);
 	t_data *retorno = (t_data*)calloc(1 ,sizeof(t_data));
 
 	/*
@@ -61,13 +56,12 @@ t_data *recebe_analiza(char *linha){
 		pos += bytes;
 
 	}
-
+	free(palavra);
 	return retorno;
 }
 
 char *acao_lista(char *analiza, int *final){
-	//int controle = *final;
-	//
+
 	char *acao = (char*)malloc(sizeof(char) * 20);
 	int r, bytes;
 	while((r = sscanf(&analiza[*final], "%s %n", acao, &bytes)) != EOF){
@@ -75,11 +69,7 @@ char *acao_lista(char *analiza, int *final){
 			*final = *final + bytes;
 				return acao;
 		}
-
-
-
 	}
-
 	return acao;
 }
 
@@ -120,4 +110,5 @@ void lista(t_lista *t, char *operacao, t_data *dado){
 
 		}
 	}
+
 }

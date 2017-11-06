@@ -16,30 +16,28 @@ int main(){
 	t_data *res;
 	t_lista *l;
 	l = cria();
-	//srand(time(NULL));
 
 	do {
 			para = 0;
 
+		 if(linhaAntiga != 0) strcpy(linha, linhaAntiga);
 
-		 if(linhaAntiga != 0){
-			 strcpy(linha, linhaAntiga);
-
-		 }
 		 recebe_linha(linha);
-		 //printf("%s\n", linha);
-		 if(strcmp(linha, linhaAntiga) == 0){
-			 break;
-		 }
+
+		 if(strcmp(linha, linhaAntiga) == 0) break;
+
 		 acao = acao_lista(linha, &para);
 		 res = recebe_analiza(&(linha[para]));
 
-
 		 lista(l ,acao, res);
 
-
+		 free(acao);
 	}while(!feof(stdin));
 
-	//free_lista(l);
+	free(res->chave);
+	free(res->conteudo);
+	free(res);
+	free(linhaAntiga);
+	free_lista(l);
 	return 0;
 }

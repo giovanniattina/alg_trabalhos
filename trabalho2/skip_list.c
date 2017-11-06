@@ -4,13 +4,10 @@
 t_lista *cria(){
 	t_lista *t;
 	t = (t_lista*)malloc(sizeof(t_lista));
-
-	t->lista = (t_item*)malloc(sizeof(t_item));
-	t->lista->p = (t_item**)calloc(MAX+1 , sizeof(t_item*));
-
+	t->lista = (t_item*)malloc(sizeof(t_item)*1);
+	t->lista->p = (t_item**)calloc(MAX , sizeof(t_item*));
 
 	t->nivel = 1;
-	t->qnt_item = 0;
 	return t;
 }
 
@@ -33,7 +30,8 @@ int insere(t_lista *t, t_data *novo){
 	aux = aux->p[1]; // item com nivel mais baixo que quero inserir
 
 	if(aux != NULL && strcmp(aux->data->chave, novo->chave) == 0){// se tiver item com a mesma chave que quero inserir da erro
-
+		free(atualizar);
+		free_data(novo);
 		return 1; //erro
 	}else{//se não tiver
 		int nivel = level_aleatorio();
@@ -46,21 +44,30 @@ int insere(t_lista *t, t_data *novo){
 		}
 
 		//aloca espaco para o novo item
+		aux = NULL;
 		aux = (t_item*)malloc(sizeof(t_item));
-		aux->data = novo;
+		aux->data = (t_data*)malloc(sizeof(t_data));
+		aux->data->chave = strdup(novo->chave);
+		aux->data->conteudo = strdup(novo->conteudo);
+
+		//limpa memoria
+		free_data(novo);
+
 		aux->p = (t_item**)calloc(MAX+1, sizeof(t_item*));
 		for(int i = 1; i <= nivel; i++){//anda por todos os niveis e vai adicionando o novo 	item
 			aux->p[i] = atualizar[i]->p[i];
 			atualizar[i]->p[i] = aux;
 		}
-
+		free(atualizar);
 	}
+
 	return 0;//se nao acho um item iguaç e nao teve erro
 
 }
 
 void free_item(t_item *del){
 	if(del != NULL){
+		free_data(del->data);
 		free(del->p);
 		free(del);
 	}
@@ -88,10 +95,11 @@ int deleta(t_lista *t, t_data *data){
 		}
 		free_item(aux);//libera memoria alocada apra o item
 		while (t->nivel > 1 && strcmp(t->lista->p[t->nivel]->data->chave, "zzz") == 0)  t->nivel--; //anda por todos os niveis e vai vendo se algum nivel ficou vazio, se sim diminiu o tamanho total de lsita
-
+		free_data(data);
 		return 0;
 
 	}
+	free_data(data);
 	return 1;
 }
 
@@ -103,13 +111,12 @@ int busca(t_lista *t, t_data *data){
 
 			aux = aux->p[i];
 		}
-	}
-
-	aux = aux->p[1];
-
-	if(aux != 0 && strcmp(aux->data->chave, data->chave) == 0){
-		printf("%s %s\n", aux->data->chave, aux->data->conteudo);
-		return 0;
+		if(aux->p[i] != 0 && strcmp(aux->p[i]->data->chave, data->chave) == 0){//se já achou ao precisa ir em todos os niveis e termina a busca
+			printf("%s %s\n", aux->p[i]->data->chave, aux->p[i]->data->conteudo);
+			free(data->chave);
+			free(data);
+			return 0;
+		}
 	}
 	return 1;
 }
@@ -125,10 +132,13 @@ int altera_conteudo(t_lista *t, t_data *data){
 
 
 	aux = aux->p[1]; // item com nivel mais baixo que quero inserir
-	if(strcmp(aux->data->chave, data->chave) == 0){
-		aux->data->conteudo = data->conteudo;
+	if(aux && strcmp(aux->data->chave, data->chave) == 0){
+		free(aux->data->conteudo);
+		aux->data->conteudo = strdup(data->conteudo);
+		//free_data(data);
 		return 0;
 	}
+
 	return 1;
 }
 
@@ -155,39 +165,32 @@ int  busca_letra(t_lista *t, char *letra){
 }
 
 void free_lista(t_lista *t){
-    t_item *nodo_atual = t->lista->p[1];
-    while(nodo_atual != t->lista) {
-        t_item *proximo_nodo = nodo_atual->p[1];
-        free(nodo_atual->p);
-        free(nodo_atual);
-        nodo_atual = proximo_nodo;
-    }
-    free(nodo_atual->p);
-    free(nodo_atual);
-    free(t);
+
+	t_item *aux = t->lista;
+	t_item *aux2;
+	int i = 0;
+		while(aux->p[1] != NULL ){
+			aux = aux->p[1];
+			free_data(aux->data);
+			if(i > 0){//para apagar o item anteiror
+				free(aux2->p);
+				free(aux2);
+			}
+			aux2 = aux;
+
+			i++;
+		}
+		free(aux->p);
+		free(aux);
+		free(t->lista->p);
+		free(t->lista);
+		free(t);
+
 }
 
+void free_data(t_data *data){
 
-void print_lista(t_lista *t){
-	t_item *aux = t->lista;
-
-
-	for(int i = 1; i <= t->nivel; i ++){
-		printf("-------------------\n");
-		printf("%d NIVEL\n", i);
-		printf("-------------------\n");
-		aux = t->lista->p[i];
-		while(aux->p[i] && strcmp(aux->data->chave, "zzz") != 0 ){
-			printf("chave %s conteudo %s\n", aux->data->chave, aux->data->conteudo);
-			aux = aux->p[i];
-		}
-		printf("chave %s conteudo %s\n", aux->data->chave, aux->data->conteudo);
-	}
-
-
-
-
-
-
-
+	free(data->chave);
+	free(data->conteudo);
+	free(data);
 }

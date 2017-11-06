@@ -24,7 +24,7 @@ struct t_item{
 
 typedef struct {
 
-	int qnt_item, nivel;
+	int nivel;
 	t_item *lista;
 }t_lista;
 
@@ -98,5 +98,10 @@ int altera_conteudo(t_lista *t, t_data *data);
  */
 void free_lista(t_lista *t);
 
-void print_lista(t_lista *t);
+/**
+ * [free_data desaloca memorio para o t_data]
+ * @param t_data [t_data para desalocar memoria]
+ */
+void free_data(t_data *data);
+
 #endif
