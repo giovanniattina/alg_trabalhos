@@ -1,0 +1,5 @@
+Aluno: Giovanni Attina do Nascimento
+Nº USP: 9286614
+
+Trabalho implementando utilizando as condições dadas no PDF, Trabalho 3: 
+Árvores Balanceadas.

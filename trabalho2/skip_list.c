@@ -138,7 +138,7 @@ int altera_conteudo(t_lista *t, t_data *data){
 		//free_data(data);
 		return 0;
 	}
-	
+
 	return 1;
 }
 
